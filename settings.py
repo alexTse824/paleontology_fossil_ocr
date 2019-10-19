@@ -4,7 +4,8 @@ import time
 # directory settings
 DIR_base = os.path.split(__file__)[0]
 DIR_data = os.path.join(DIR_base, 'data')
-DIR_straitified_dataset = os.path.join(DIR_data, "straitified_dataset")
+DIR_straitified_dataset = os.path.join(DIR_data, 'straitified_dataset')
+DIR_weight = os.path.join(DIR_data, 'weight')
 
 # MongoDB settings
 DB_address_ip = 'localhost'
