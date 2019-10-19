@@ -6,7 +6,5 @@ DIR_data = os.path.join(DIR_base, 'data')
 
 # db settings
 DB_address_ip = 'localhost'
-DB_address_port = 3306
-DB_username = 'root'
-DB_password = '12345678'
+DB_address_port = 27017
 DB_name = 'paleontology_fossils_dataset'
