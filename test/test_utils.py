@@ -1,7 +1,7 @@
 import os
 import unittest
 
-from utils import file_name_format
+from utils.file_handler import file_name_format
 
 
 class TestUtils(unittest.TestCase):
