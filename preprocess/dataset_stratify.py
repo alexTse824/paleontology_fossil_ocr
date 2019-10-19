@@ -11,11 +11,11 @@ def dataset_stratified(kfold_split_num=5):
     straitify_ret = {dataset_label: {} for dataset_label in y}
 
     for index, dataset_label in enumerate(y):
-        for train_set, test_set in skf.split(X[index], [dataset_label]*len(X[index])):
-            straitify_ret[dataset_label]['train'] = [X[index][i] for i in train_set]
+        for validation_set, test_set in skf.split(X[index], [dataset_label]*len(X[index])):
+            straitify_ret[dataset_label]['validation'] = [X[index][i] for i in validation_set]
             straitify_ret[dataset_label]['test'] = [X[index][i] for i in test_set]
 
-    train_dir_name = f'KFold{kfold_split_num}_{CURRENT_TIME}'
-    dataset_file_straitify(train_dir_name, straitify_ret)
+    validation_dir_name = f'KFold.{kfold_split_num}.{CURRENT_TIME}'
+    dataset_file_straitify(validation_dir_name, straitify_ret)
 
     return straitify_ret

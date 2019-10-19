@@ -8,7 +8,7 @@ class TestDataStraitify(unittest.TestCase):
         ret = dataset_stratified()
         for key, value in ret.items():
             print(f'Label: {key}')
-            print(f'train_set number: {len(value["train"])}')
+            print(f'validation_set number: {len(value["validation"])}')
             print(f'test_set number: {len(value["test"])}')
             print('-' * 50)
 
