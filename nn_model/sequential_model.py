@@ -1,12 +1,9 @@
-'''
-Model By: https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
-'''
 import os
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Activation
 from keras.utils import plot_model
 
-from settings import DIR_weight
+from settings import DIR_weight, DIR_model_plot
 
 
 class Sequential(Sequential):
@@ -23,4 +20,5 @@ class Sequential(Sequential):
         self.save_weights(os.path.join(DIR_weight, weight_file_name))
     
     def plot(self):
-        plot_model(self, f'{self.model_name}.png')
+        plot_path = os.path.join(DIR_model_plot, f'{self.model_name}.png')
+        plot_model(self, plot_path, show_shapes=True)

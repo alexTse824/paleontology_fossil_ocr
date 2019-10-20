@@ -6,6 +6,8 @@ DIR_base = os.path.split(__file__)[0]
 DIR_data = os.path.join(DIR_base, 'data')
 DIR_straitified_dataset = os.path.join(DIR_data, 'straitified_dataset')
 DIR_weight = os.path.join(DIR_data, 'weight')
+DIR_model_plot = os.path.join(DIR_data, 'model_plot')
+DIR_binariazation = os.path.join(DIR_data, 'binarization')
 
 # MongoDB settings
 DB_address_ip = 'localhost'

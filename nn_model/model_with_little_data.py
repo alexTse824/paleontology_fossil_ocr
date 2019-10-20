@@ -1,3 +1,6 @@
+'''
+Model By: https://blog.keras.io/building-powerful-image-classification-models-using-very-little-data.html
+'''
 import os
 from keras.layers import Conv2D, MaxPooling2D, Activation, Dropout, Flatten, Dense
 from keras.preprocessing.image import ImageDataGenerator
@@ -22,7 +25,7 @@ IMG_HEIGHT = 224
 
 model = Sequential(STRAITIFIED_DIR_NAME)
 
-model.add(Conv2D(32, (3, 3), input_shape=(3, IMG_WIDTH, IMG_HEIGHT)))
+model.add(Conv2D(32, (3, 3), input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)))
 model.add(Activation('relu'))
 model.add(MaxPooling2D(pool_size=(2, 2)))
 
