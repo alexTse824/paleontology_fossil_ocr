@@ -8,14 +8,21 @@ from keras.preprocessing.image import ImageDataGenerator
 from nn_model.sequential_model import Sequential
 from settings import DIR_straitified_dataset
 
-STRAITIFIED_DIR_NAME = 'KFold.5.20191019215945'
+
+# fix OMP: Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized.
+os.environ["KMP_DUPLICATE_LIB_OK"]= 'TRUE'
+
+STRAITIFIED_DIR_NAME = os.path.join('KFold.5.20191020093348', '0')
 DATASET_DIR = os.path.join(DIR_straitified_dataset, STRAITIFIED_DIR_NAME)
 
-# TRAIN_SAMPLE_NUM = len(os.listdir(os.path.join(DATASET_DIR, 'train')))
-TRAIN_SAMPLE_NUM = 2000
-# VALIDATION_SAMPLE_NUM = len(os.listdir(os.path.join(DATASET_DIR,
-                                                    # 'validation')))
-VALIDATION_SAMPLE_NUM = 2000
+TRAIN_SAMPLE_NUM = 0
+VALIDATION_SAMPLE_NUM = 0
+
+for root, dir_name, file_name in os.walk(os.path.join(DATASET_DIR, 'train')):
+    TRAIN_SAMPLE_NUM += len(file_name)
+
+for root, dir_name, file_name in os.walk(os.path.join(DATASET_DIR, 'validation')):
+    VALIDATION_SAMPLE_NUM += len(file_name)
 
 BATCH_SIZE = 64
 EPOCHS = 50
@@ -43,27 +50,28 @@ model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',
               metrics=['accuracy'])
 
-# train_datagen = ImageDataGenerator(rescale=1. / 255,
-#                                    shear_range=0.2,
-#                                    zoom_range=0.2,
-#                                    horizontal_flip=True)
-# validation_datagen = ImageDataGenerator(rescale=1. / 255)
+train_datagen = ImageDataGenerator(rescale=1. / 255,
+                                   shear_range=0.2,
+                                   zoom_range=0.2,
+                                   horizontal_flip=True)
+validation_datagen = ImageDataGenerator(rescale=1. / 255)
 
-# train_generator = train_datagen.flow_from_directory(
-#     os.path.join(DATASET_DIR, 'train'),
-#     target_size=(IMG_WIDTH, IMG_HEIGHT),
-#     batch_size=BATCH_SIZE,
-#     class_mode='binary')
-# validation_generator = validation_datagen.flow_from_directory(
-#     os.path.join(DATASET_DIR, 'validation'),
-#     target_size=(IMG_WIDTH, IMG_HEIGHT),
-#     batch_size=BATCH_SIZE,
-#     class_mode='binary')
 
-# model.fit_generator(train_generator,
-#                     steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,
-#                     epochs=EPOCHS,
-#                     validation_data=validation_generator,
-#                     validation_steps=VALIDATION_SAMPLE_NUM // BATCH_SIZE)
+train_generator = train_datagen.flow_from_directory(
+    os.path.join(DATASET_DIR, 'train'),
+    target_size=(IMG_WIDTH, IMG_HEIGHT),
+    batch_size=BATCH_SIZE,
+    class_mode='binary')
+validation_generator = validation_datagen.flow_from_directory(
+    os.path.join(DATASET_DIR, 'validation'),
+    target_size=(IMG_WIDTH, IMG_HEIGHT),
+    batch_size=BATCH_SIZE,
+    class_mode='binary')
 
-# model.save_weights(f'{STRAITIFIED_DIR_NAME}.weights.h5')
+model.fit_generator(train_generator,
+                    steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,
+                    epochs=EPOCHS,
+                    validation_data=validation_generator,
+                    validation_steps=VALIDATION_SAMPLE_NUM // BATCH_SIZE)
+
+model.save_weights(f'{STRAITIFIED_DIR_NAME}.weights.h5')
