@@ -4,13 +4,15 @@ from keras.applications import VGG16
 from keras.models import Sequential
 from keras.layers.core import Flatten, Dense, Dropout
 from keras.optimizers import SGD
+from keras.callbacks import ModelCheckpoint
 
-from settings import DIR_straitified_dataset
+from settings import DIR_straitified_dataset, DIR_weight, CURRENT_TIME
 
 # fix OMP: Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized.
 os.environ["KMP_DUPLICATE_LIB_OK"] = 'TRUE'
 
-STRAITIFIED_DIR_NAME = os.path.join('KFold.5.20191020093348', '0')
+STRAITIFIED_NAME = 'KFold.5.20191020093348'
+STRAITIFIED_DIR_NAME = os.path.join(STRAITIFIED_NAME, '0')
 DATASET_DIR = os.path.join(DIR_straitified_dataset, STRAITIFIED_DIR_NAME)
 
 TRAIN_SAMPLE_NUM = 0
@@ -36,6 +38,7 @@ model.add(
           input_shape=(IMG_WIDTH, IMG_HEIGHT, 3)))
 
 top_model = Sequential()
+# vgg16 not include_top's output_shape: (None, 7, 7, 512)
 top_model.add(Flatten(input_shape=model.output_shape[1:]))
 top_model.add(Dense(256, activation='relu'))
 top_model.add(Dropout(0.5))
@@ -69,9 +72,18 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='categorical',
     shuffle=True)
 
+checkpoint = ModelCheckpoint(filepath=os.path.join(f'{DIR_weight}.0.{BATCH_SIZE}.{EPOCHS}.{CURRENT_TIME}.h5'),
+                             monitor="val_acc",
+                             verbose=2,
+                             save_best_only=False,
+                             save_weights_only=False,
+                             mode='max',
+                             period=1)
+
 model.fit_generator(train_generator,
                     steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,
                     epochs=EPOCHS,
                     validation_data=validation_generator,
                     validation_steps=VALIDATION_SAMPLE_NUM // BATCH_SIZE,
-                    verbose=2)
+                    callbacks=[checkpoint],
+                    verbose=1)
