@@ -1,8 +1,10 @@
+import sys
+sys.path.append('.')
 import os
 import re
 import shutil
 
-from settings import DIR_straitified_dataset
+from settings import DIR_straitified_dataset, DIR_data
 
 
 def file_name_format(path):
@@ -41,3 +43,9 @@ def dataset_file_straitify(dir_name, stratified_data):
             file_name = os.path.split(validation_file)[-1]
             shutil.copyfile(validation_file,
                             os.path.join(label_test_dir, file_name))
+
+
+# if __name__ == "__main__":
+    # format picture names under /data/raw_data
+    # for i in range(9):
+        # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))

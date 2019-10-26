@@ -1,8 +1,10 @@
+import sys
+sys.path.append('.')
 import os
 from sklearn.model_selection import StratifiedKFold
 
-from preprocess.db_handler import get_dataset_info
-from preprocess.file_handler import dataset_file_straitify
+from db_handler import get_dataset_info
+from file_handler import dataset_file_straitify
 from settings import CURRENT_TIME
 
 
