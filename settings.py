@@ -9,10 +9,5 @@ DIR_weight = os.path.join(DIR_data, 'weight')
 DIR_model_plot = os.path.join(DIR_data, 'model_plot')
 DIR_binariazation = os.path.join(DIR_data, 'binarization')
 
-# MongoDB settings
-DB_address_ip = 'localhost'
-DB_address_port = 27017
-DB_name = 'paleontology_fossils_dataset'
-
 # timestamp
 CURRENT_TIME = time.strftime("%Y%m%d%H%M%S", time.localtime())

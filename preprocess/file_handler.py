@@ -4,9 +4,8 @@ sys.path.append('.')
 import os
 import re
 import json
-import shutil
 
-from settings import DIR_straitified_dataset, DIR_data
+from settings import DIR_data
 
 
 def file_name_format(path):
@@ -48,27 +47,6 @@ def get_dataset_info(json_filepath):
         return json.load(f)
 
 
-def dataset_file_straitify(dir_name, stratified_data):
-    '''copy dataset files to matching directories according to given stratified_data'''
-    current_straitified_dir = os.path.join(DIR_straitified_dataset, dir_name)
-    train_set_dir = os.path.join(current_straitified_dir, 'train')
-    validation_set_dir = os.path.join(current_straitified_dir, 'validation')
-
-    for label, data_set in stratified_data.items():
-        label_validation_dir = os.path.join(train_set_dir, label)
-        label_test_dir = os.path.join(validation_set_dir, label)
-        os.makedirs(label_validation_dir)
-        os.makedirs(label_test_dir)
-
-        for train_file in data_set['train']:
-            file_name = os.path.split(train_file)[-1]
-            shutil.copyfile(train_file,
-                            os.path.join(label_validation_dir, file_name))
-
-        for validation_file in data_set['validation']:
-            file_name = os.path.split(validation_file)[-1]
-            shutil.copyfile(validation_file,
-                            os.path.join(label_test_dir, file_name))
 
 
 if __name__ == "__main__":
