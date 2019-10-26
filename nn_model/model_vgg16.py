@@ -4,7 +4,7 @@ from keras.applications import VGG16
 from keras.models import Sequential
 from keras.layers.core import Flatten, Dense, Dropout
 from keras.optimizers import SGD
-from keras.callbacks import ModelCheckpoint
+from keras.callbacks import ModelCheckpoint, TensorBoard
 
 from settings import DIR_straitified_dataset, DIR_weight, CURRENT_TIME
 
@@ -72,7 +72,7 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='categorical',
     shuffle=True)
 
-checkpoint = ModelCheckpoint(filepath=os.path.join(f'{DIR_weight}.0.{BATCH_SIZE}.{EPOCHS}.{CURRENT_TIME}.h5'),
+checkpoint = ModelCheckpoint(filepath=os.path.join(DIR_weight, f'{DIR_weight}.0.{BATCH_SIZE}.{EPOCHS}.{CURRENT_TIME}.h5'),
                              monitor="val_acc",
                              verbose=2,
                              save_best_only=False,
@@ -80,10 +80,20 @@ checkpoint = ModelCheckpoint(filepath=os.path.join(f'{DIR_weight}.0.{BATCH_SIZE}
                              mode='max',
                              period=1)
 
+tbCallBack = TensorBoard(log_dir=DIR_weight,
+                         histogram_freq=0,
+                         batch_size=32,
+                         write_grads=True,
+                         write_graph=True,
+                         write_images=True,
+                         embeddings_freq=0,
+                         embeddings_layer_names=None,
+                         embeddings_metadata=None)
+
 model.fit_generator(train_generator,
                     steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,
                     epochs=EPOCHS,
                     validation_data=validation_generator,
                     validation_steps=VALIDATION_SAMPLE_NUM // BATCH_SIZE,
-                    callbacks=[checkpoint],
+                    callbacks=[checkpoint, tbCallBack],
                     verbose=1)
