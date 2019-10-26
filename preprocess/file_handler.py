@@ -42,6 +42,12 @@ def output_dataset_info(ds_path):
         json.dump(ds_info, f, indent=4)
 
 
+def get_dataset_info(json_filepath):
+    '''get dataset info from json file'''
+    with open(json_filepath) as f:
+        return json.load(f)
+
+
 def dataset_file_straitify(dir_name, stratified_data):
     '''copy dataset files to matching directories according to given stratified_data'''
     current_straitified_dir = os.path.join(DIR_straitified_dataset, dir_name)
@@ -69,4 +75,9 @@ if __name__ == "__main__":
     # format picture names under /data/raw_data
     # for i in range(9):
     # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))
-    output_dataset_info(os.path.join(DIR_data, 'raw_data'))
+
+    # output_dataset_info(os.path.join(DIR_data, 'raw_data'))
+
+    get_dataset_info(
+        '/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json'
+    )
