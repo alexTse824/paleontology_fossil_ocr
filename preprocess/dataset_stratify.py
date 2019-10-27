@@ -5,7 +5,7 @@ from sklearn.model_selection import StratifiedKFold
 
 sys.path.append('.')
 from file_handler import get_dataset_info
-from settings import CURRENT_TIME, DIR_straitified_dataset
+from settings import DIR_straitified_dataset
 
 
 def sort_stratified_dataset(dir_name, label, train_set, validation_set):
@@ -30,7 +30,7 @@ def dataset_stratified(ds_info_file, kfold_split_num=5):
     ds_info = get_dataset_info(ds_info_file)
     skf = StratifiedKFold(n_splits=kfold_split_num, shuffle=True)
 
-    stratified_dir_name = f'KFold.{kfold_split_num}.{CURRENT_TIME}'
+    stratified_dir_name = f'KFold.{kfold_split_num}'
 
     for label, dataset_list in ds_info.items():
         # skf.split para1: ['class01/1.jpg', 'class01/2.jpg', ...]
@@ -41,4 +41,4 @@ def dataset_stratified(ds_info_file, kfold_split_num=5):
 
 
 if __name__ == "__main__":
-    dataset_stratified('/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json', 5)
+    dataset_stratified('/home/xie/Code/paleontology_fossil_ocr/data/raw_data/raw_data.json', 5)

@@ -18,7 +18,7 @@ class Sequential(Sequential):
 
     def save_weights(self, weight_file_name):
         self.save_weights(os.path.join(DIR_weight, weight_file_name))
-    
+
     def plot(self):
         plot_path = os.path.join(DIR_model_plot, f'{self.model_name}.png')
         plot_model(self, plot_path, show_shapes=True)
