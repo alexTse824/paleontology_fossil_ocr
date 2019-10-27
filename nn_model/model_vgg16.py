@@ -13,13 +13,20 @@ from settings import DIR_straitified_dataset, DIR_weight, DIR_log
 # fix OMP: Error #15: Initializing libiomp5.dylib, but found libiomp5.dylib already initialized.
 os.environ["KMP_DUPLICATE_LIB_OK"] = 'TRUE'
 
+BATCH_SIZE = 64
+EPOCHS = 100
+
+IMG_WIDTH = 224
+IMG_HEIGHT = 224
+
+TRAIN_SAMPLE_NUM = 0
+VALIDATION_SAMPLE_NUM = 0
+
 STRAITIFIED_NAME = 'KFold.5'
 SET_INDEX = '0'
 STRAITIFIED_DIR_NAME = os.path.join(STRAITIFIED_NAME, SET_INDEX)
 DATASET_DIR = os.path.join(DIR_straitified_dataset, STRAITIFIED_DIR_NAME)
-
-TRAIN_SAMPLE_NUM = 0
-VALIDATION_SAMPLE_NUM = 0
+WEIGHT_FILE = os.path.join(DIR_weight, f'{STRAITIFIED_NAME}.SET{SET_INDEX}.BATCH{BATCH_SIZE}.EPOCHS{EPOCHS}.h5')
 
 for root, dir_name, file_name in os.walk(os.path.join(DATASET_DIR, 'train')):
     TRAIN_SAMPLE_NUM += len(file_name)
@@ -28,11 +35,6 @@ for root, dir_name, file_name in os.walk(
         os.path.join(DATASET_DIR, 'validation')):
     VALIDATION_SAMPLE_NUM += len(file_name)
 
-BATCH_SIZE = 64
-EPOCHS = 100
-
-IMG_WIDTH = 224
-IMG_HEIGHT = 224
 
 model = Sequential()
 # vgg16 not include_top's output_shape: (None, 7, 7, 512)
@@ -72,7 +74,7 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='categorical',
     shuffle=True)
 
-checkpoint = ModelCheckpoint(filepath=os.path.join(DIR_weight, f'{STRAITIFIED_NAME}.SET{SET_INDEX}.BATCH{BATCH_SIZE}.EPOCHS{EPOCHS}.h5'),
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE,
                              monitor="val_acc",
                              verbose=2,
                              save_best_only=False,
@@ -89,6 +91,9 @@ tbCallBack = TensorBoard(log_dir=DIR_log,
                          embeddings_freq=0,
                          embeddings_layer_names=None,
                          embeddings_metadata=None)
+
+if os.path.exists(WEIGHT_FILE):
+    model.load_weights(WEIGHT_FILE)
 
 model.fit_generator(train_generator,
                     steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,

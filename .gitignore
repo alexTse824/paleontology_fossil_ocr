@@ -6,7 +6,4 @@
 /.vscode
 /.idea
 
-/data/raw_data
-/data/straitified_dataset
-/data/weight
-/data/log
+/data
