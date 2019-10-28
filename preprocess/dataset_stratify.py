@@ -41,4 +41,4 @@ def dataset_stratified(ds_info_file, kfold_split_num=5):
 
 
 if __name__ == "__main__":
-    dataset_stratified('/home/xie/Code/paleontology_fossil_ocr/data/raw_data/raw_data.json', 5)
+    dataset_stratified('/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json', 5)
