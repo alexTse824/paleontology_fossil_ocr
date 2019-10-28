@@ -4,6 +4,8 @@ sys.path.append('.')
 import os
 import re
 import json
+import cv2
+import glob
 
 from settings import DIR_data
 
@@ -47,15 +49,35 @@ def get_dataset_info(json_filepath):
         return json.load(f)
 
 
+def img_resize(filename, min_side=224):
+    '''scale image and padding white to fit target width & height'''
+    img = cv2.imread(filename)
+    size = img.shape
+    h, w = size[0], size[1]
+    scale = max(w, h) / float(min_side)
+    new_w, new_h = int(w/scale), int(h/scale)
+    if new_w % 2 != min_side % 2:
+        new_w -= 1
+    if new_h % 2 != min_side % 2:
+        new_h -= 1
+    resize_img = cv2.resize(img, (new_w, new_h))
+
+    top, bottom, left, right = int((min_side - new_h) / 2), int((min_side - new_h) / 2), int((min_side - new_w) / 2), int((min_side - new_w) / 2)
+
+    pad_img = cv2.copyMakeBorder(resize_img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+    cv2.imwrite(filename, pad_img)
 
 
 if __name__ == "__main__":
     # format picture names under /data/raw_data
     # for i in range(9):
-    # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))
+        # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))  
 
     # output_dataset_info(os.path.join(DIR_data, 'raw_data'))
 
-    get_dataset_info(
-        '/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json'
-    )
+    # get_dataset_info(
+    #     '/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json'
+    # )
+
+    for file in glob.glob('/Users/xie/Code/paleontology_fossil_ocr/data/resized_dataset/Fossil_Insect/*'):
+        img_resize(file, 128)
