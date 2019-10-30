@@ -26,6 +26,21 @@ def make_tfrecord_dataset(json_path, tfrecords_path):
     writer.close()
 
 
-if __name__ == '__main__':
-    make_tfrecord_dataset('/Users/xie/Code/paleontology_fossil_ocr/data/raw_data_448/raw_data_448.json',
-                          '/Users/xie/Code/paleontology_fossil_ocr/data/Fossil9.448.tfrecords')
+def conver_2_tfrecords(label, data_set, tfrecord_file_path):
+    '''
+    label: class_1
+    dataset: [class_1/1.jpg, class_1/2.jpg, ...]
+    '''
+    writer = tf.io.TFRecordWriter(tfrecord_file_path)
+
+    for image in data_set:
+        img = Image.open(image)
+        img_raw = img.tobytes()
+
+        example = tf.train.Example(features=tf.train.Features(feature={
+            'label': tf.train.Feature(bytes_list=tf.train.BytesList(value=[tf.compat.as_bytes(label)])),
+            'image': tf.train.Feature(bytes_list=tf.train.BytesList(value=[img_raw]))
+        }))
+        writer.write(example.SerializeToString())
+
+    writer.close()

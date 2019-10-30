@@ -5,7 +5,10 @@ import cv2
 
 
 def file_name_format(path):
-    """change filename in target directory to serialized number and with extension .jpg"""
+    '''
+    change filename in target directory to serialized number;
+    modify file extension to *.jpg;
+    '''
     os.chdir(path)
     file_list = os.listdir(path)
 
@@ -19,20 +22,27 @@ def file_name_format(path):
             print(file_name)
 
 
-def output_dataset_info(ds_path):
-    '''organize *.jpg file in dataset information and output into json file'''
-    ds_info = {}
-    for root, _, filenames in os.walk(ds_path):
+def get_ds_structure(ds_dir):
+    '''get dataset structure and sort in dict'''
+    ds_struct = {}
+    for root, _, filenames in os.walk(ds_dir):
         for filename in filenames:
             if filename.split('.')[-1] == 'jpg':
                 label = os.path.split(root)[-1]
                 data_path = os.path.join(root, filename)
                 try:
-                    ds_info[label].append(data_path)
+                    ds_struct[label].append(data_path)
                 except KeyError:
-                    ds_info[label] = [data_path]
-    ds_info_json_file = os.path.join(os.path.dirname(ds_path),
-                                     f'{os.path.basename(ds_path)}.json')
+                    ds_struct[label] = [data_path]
+    return ds_struct
+
+
+def output_dataset_info(ds_dir):
+    '''organize *.jpg file in dataset information and output into json file'''
+    ds_info = get_ds_structure(ds_dir)
+    ds_info_json_file = os.path.join(os.path.dirname(ds_dir),
+                                     f'{os.path.basename(ds_dir)}.json')
+
     with open(ds_info_json_file, 'w') as f:
         json.dump(ds_info, f, indent=4)
 
@@ -48,6 +58,8 @@ def img_resize(filename, min_side=224):
     img = cv2.imread(filename)
     size = img.shape
     h, w = size[0], size[1]
+    
+    # scale img to least w/h ratio
     scale = max(w, h) / float(min_side)
     new_w, new_h = int(w / scale), int(h / scale)
     if new_w % 2 != min_side % 2:
@@ -56,8 +68,12 @@ def img_resize(filename, min_side=224):
         new_h -= 1
     resize_img = cv2.resize(img, (new_w, new_h))
 
-    top, bottom, left, right = int((min_side - new_h) / 2), int((min_side - new_h) / 2), int(
-        (min_side - new_w) / 2), int((min_side - new_w) / 2)
+    # padding image to fill target width / height
+    top = int((min_side - new_h) / 2),
+    bottom = int((min_side - new_h) / 2)
+    left = int((min_side - new_w) / 2)
+    right = int((min_side - new_w) / 2)
 
-    pad_img = cv2.copyMakeBorder(resize_img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[255, 255, 255])
+    pad_img = cv2.copyMakeBorder(resize_img, top, bottom, left, right,
+                                 cv2.BORDER_CONSTANT, value=[255, 255, 255])
     cv2.imwrite(filename, pad_img)
