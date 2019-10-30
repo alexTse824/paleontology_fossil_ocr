@@ -37,8 +37,8 @@ def output_dataset_info(ds_path):
                     ds_info[label].append(data_path)
                 except KeyError:
                     ds_info[label] = [data_path]
-    ds_info_json_file = os.path.join(ds_path,
-                                     f'{os.path.split(ds_path)[-1]}.json')
+    ds_info_json_file = os.path.join(os.path.dirname(ds_path),
+                                     f'{os.path.basename(ds_path)}.json')
     with open(ds_info_json_file, 'w') as f:
         json.dump(ds_info, f, indent=4)
 
@@ -73,11 +73,16 @@ if __name__ == "__main__":
     # for i in range(9):
         # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))  
 
-    # output_dataset_info(os.path.join(DIR_data, 'raw_data'))
+    output_dataset_info(os.path.join(DIR_data, 'raw_data_448'))
 
     # get_dataset_info(
     #     '/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json'
     # )
 
-    for file in glob.glob('/Users/xie/Code/paleontology_fossil_ocr/data/resized_dataset/Fossil_Insect/*'):
-        img_resize(file, 128)
+    # path = '/Users/xie/Code/paleontology_fossil_ocr/data/raw_data_448'
+    # for root, dirnames, filenames in os.walk(path):
+    #     for file in filenames:
+    #         file_path = os.path.join(root, file)
+    #         if os.path.splitext(file_path)[-1] == '.jpg':
+    #             img_resize(file_path, 448)
+
