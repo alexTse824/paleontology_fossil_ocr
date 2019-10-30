@@ -1,13 +1,7 @@
-import sys
-sys.path.append('.')
-
 import os
 import re
 import json
 import cv2
-import glob
-
-from settings import DIR_data
 
 
 def file_name_format(path):
@@ -55,34 +49,15 @@ def img_resize(filename, min_side=224):
     size = img.shape
     h, w = size[0], size[1]
     scale = max(w, h) / float(min_side)
-    new_w, new_h = int(w/scale), int(h/scale)
+    new_w, new_h = int(w / scale), int(h / scale)
     if new_w % 2 != min_side % 2:
         new_w -= 1
     if new_h % 2 != min_side % 2:
         new_h -= 1
     resize_img = cv2.resize(img, (new_w, new_h))
 
-    top, bottom, left, right = int((min_side - new_h) / 2), int((min_side - new_h) / 2), int((min_side - new_w) / 2), int((min_side - new_w) / 2)
+    top, bottom, left, right = int((min_side - new_h) / 2), int((min_side - new_h) / 2), int(
+        (min_side - new_w) / 2), int((min_side - new_w) / 2)
 
     pad_img = cv2.copyMakeBorder(resize_img, top, bottom, left, right, cv2.BORDER_CONSTANT, value=[255, 255, 255])
     cv2.imwrite(filename, pad_img)
-
-
-if __name__ == "__main__":
-    # format picture names under /data/raw_data
-    # for i in range(9):
-        # file_name_format(os.path.join(DIR_data, 'raw_data', f'class_{i}'))  
-
-    output_dataset_info(os.path.join(DIR_data, 'raw_data_448'))
-
-    # get_dataset_info(
-    #     '/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json'
-    # )
-
-    # path = '/Users/xie/Code/paleontology_fossil_ocr/data/raw_data_448'
-    # for root, dirnames, filenames in os.walk(path):
-    #     for file in filenames:
-    #         file_path = os.path.join(root, file)
-    #         if os.path.splitext(file_path)[-1] == '.jpg':
-    #             img_resize(file_path, 448)
-

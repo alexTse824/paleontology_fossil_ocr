@@ -1,10 +1,7 @@
-import sys
 import os
 import shutil
 from sklearn.model_selection import StratifiedKFold
-
-sys.path.append('.')
-from file_handler import get_dataset_info
+from preprocess.file_handler import get_dataset_info
 from settings import DIR_straitified_dataset
 
 
@@ -37,8 +34,6 @@ def dataset_stratified(ds_info_file, kfold_split_num=5):
         # skf.split para2: ['class01', 'class01', ...]
         for set_index, (train_set, validation_set) in enumerate(skf.split(dataset_list, [label] * len(dataset_list))):
             current_stratified_dir_name = os.path.join(stratified_dir_name, str(set_index))
-            sort_stratified_dataset(current_stratified_dir_name, label, [dataset_list[i] for i in train_set], [dataset_list[i] for i in validation_set])
-
-
-if __name__ == "__main__":
-    dataset_stratified('/Users/xie/Code/NJU/paleontology_fossil_ocr/data/raw_data/raw_data.json', 5)
+            sort_stratified_dataset(current_stratified_dir_name, label, [dataset_list[i] for i in train_set],
+                                    [dataset_list[i] for i in validation_set])
+# TODO: stratify_dataset_and_convert_tfrecords
