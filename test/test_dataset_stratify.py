@@ -1,6 +1,6 @@
 import unittest
 
-from preprocess.dataset_stratify import dataset_stratified, stratify_ds_tfrecords
+from preprocess.dataset_stratify import dataset_stratified, stratify_ds_tfrecords, stratify_ds_tfrecords_mixed
 
 
 class TestDatasetStratify(unittest.TestCase):
@@ -12,6 +12,11 @@ class TestDatasetStratify(unittest.TestCase):
         ds_dir = '/Users/xie/Code/paleontology_fossil_ocr/data/raw_data_224'
         output_dir = '/Users/xie/Code/paleontology_fossil_ocr/data/tfrecords_data/raw_data_224_tfs'
         stratify_ds_tfrecords(ds_dir, output_dir)
+
+    def test_stratify_ds_tfrecords_mixed(self):
+        ds_dir = '/Users/xie/Code/paleontology_fossil_ocr/data/raw_data_224'
+        output_dir = '/Users/xie/Code/paleontology_fossil_ocr/data/tfrecords_data/raw_data_224_mixed_tfs'
+        stratify_ds_tfrecords_mixed(ds_dir, output_dir)
 
 
 if __name__ == '__main__':

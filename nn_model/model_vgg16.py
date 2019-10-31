@@ -94,7 +94,7 @@ tbCallBack = TensorBoard(log_dir=DIR_log,
 
 if os.path.exists(WEIGHT_FILE):
     model.load_weights(WEIGHT_FILE)
-
+# TODO: validation_data为验证集, 应从训练集中分离, 使用validaiton_split比例划分(fit方法), 另使用test_set进行predict进行测试accuracy
 model.fit_generator(train_generator,
                     steps_per_epoch=TRAIN_SAMPLE_NUM // BATCH_SIZE,
                     epochs=EPOCHS,

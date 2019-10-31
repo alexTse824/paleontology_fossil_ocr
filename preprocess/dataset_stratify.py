@@ -3,7 +3,7 @@ import shutil
 from sklearn.model_selection import StratifiedKFold
 
 from preprocess.file_handler import get_dataset_info, get_ds_structure
-from preprocess.tfrecords_convert import conver_2_tfrecords
+from preprocess.tfrecords_convert import conver_2_tfrecords, convert2tfrecords_mixed
 from settings import DIR_straitified_dataset
 
 
@@ -77,7 +77,16 @@ def dataset_stratified(ds_info_file, kfold_split_num=5):
 
 
 def stratify_ds_tfrecords(ds_dir, tfrecords_dir, n_splits=5):
-    '''same as dataset_stratified, but convert into tfrecords format'''
+    '''
+    same as dataset_stratified, but convert into tfrecords format
+    |-0
+    |-train
+    |--class1.tfrecords
+    |--class2.tfrecords
+    |-validation
+    |--class1.tfrecords
+    |--class2.tfrecords
+    '''
     ds_struct = get_ds_structure(ds_dir)
     stratified_ds = stratify_dataset(ds_struct)
 
@@ -93,3 +102,34 @@ def stratify_ds_tfrecords(ds_dir, tfrecords_dir, n_splits=5):
             for label, current_set in set_dataset[set_type].items():
                 tfrecord_file_path = os.path.join(set_dir, f'{label}.tfrecords')
                 conver_2_tfrecords(label, current_set, tfrecord_file_path)
+
+
+def stratify_ds_tfrecords_mixed(ds_dir, tfrecords_dir, n_splits=5):
+    '''
+    another dataset stratify method, but mix all class in single tfrecords file
+    |-0
+    |--train.0.tfrecords
+    |--validation.0.tfrecords
+    |-1
+    |--train.1.tfrecords
+    |--validation.1.tfrecords
+    '''
+    ds_struct = get_ds_structure(ds_dir)
+    stratified_ds = stratify_dataset(ds_struct)
+
+    for set_index, set_dataset in stratified_ds.items():
+        set_dir = os.path.join(tfrecords_dir, set_index)
+        os.makedirs(set_dir)
+
+        train_set_mixed, validation_set_mixed = [], []
+        train_set_tfrecord_file_path = os.path.join(set_dir, f'train.{set_index}.tfrecords')
+        validation_set_tfrecord_file_path = os.path.join(set_dir, f'validation.{set_index}.tfrecords')
+
+        for label, set_list in set_dataset['train'].items():
+            train_set_mixed.extend([(label, file_path) for file_path in set_list])
+
+        for label, set_list in set_dataset['validation'].items():
+            validation_set_mixed.extend([(label, file_path) for file_path in set_list])
+
+        convert2tfrecords_mixed(train_set_mixed, train_set_tfrecord_file_path)
+        convert2tfrecords_mixed(validation_set_mixed, validation_set_tfrecord_file_path)
