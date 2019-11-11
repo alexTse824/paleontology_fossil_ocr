@@ -1,4 +1,5 @@
 import os
+import time
 import numpy as np
 import tensorflow as tf
 from flask import Flask, request, jsonify
@@ -27,34 +28,39 @@ def predict(file):
 	x = np.expand_dims(x, axis=0)
 	y = model.predict(x).tolist()[0]
 
+	top_3_proba = sorted(y, reverse=True)[:3]
+	top_3_label = [label[y.index(i)] for i in top_3_proba]
+
 	predict_proba = max(y)
 	predict_label = label[y.index(predict_proba)]
+	
+	top_3_proba = [round(i * 100, 2) for i in top_3_proba]
 
-	print('-' * 100)
-	print(f'File: {file}')
-	print(f'Lable: {predict_label}')
-	print(f'Probability: {predict_proba}')
-	print('-' * 100)
-
-	return predict_label, round(predict_proba * 100, 2)
+	return [list(i) for i in zip(top_3_label, top_3_proba)]
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/', methods=['POST'])
+@app.route('/', methods=['GET', 'POST'])
 def index():
-	file = request.files['file']
-	file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-	file_path = os.path.join(UPLOAD_FOLDER, file.filename)
-	file.save(file_path)
-	label, proba = predict(file_path)
-	
-	return jsonify({'label': label, 'proba': str(proba)})
+	start_time = time.time()
+	if request.method == 'POST':
+		file = request.files['file']
+		file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+		file_path = os.path.join(UPLOAD_FOLDER, file.filename)
+		file.save(file_path)
+		ret = predict(file_path)
+		print('-' * 100)
+		cost = round(time.time() - start_time, 3) * 1000
+		print('Time cost: {} ms'.format(cost))
+		print('-' * 100)
+		return jsonify({'ret': ret, 'predictCost': cost})
+	return '<h1>Welcome to FossilOCR Server</h1>'
+
 if __name__ == '__main__':
 	load_weight(WEIGHT)
 	app.run(
 		debug=True,
 		host='0.0.0.0',
 		port='8000',
-		ssl_context='adhoc'
 	)
